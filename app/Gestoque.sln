@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.421
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gestoque", "Gestoque\Gestoque.csproj", "{1C86F5EE-8161-4A1E-8EFC-83C8D071DCBE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rotativa", "Rotativa\Rotativa.csproj", "{D93FAA11-31F0-4629-B53C-AA8680283529}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1C86F5EE-8161-4A1E-8EFC-83C8D071DCBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C86F5EE-8161-4A1E-8EFC-83C8D071DCBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C86F5EE-8161-4A1E-8EFC-83C8D071DCBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C86F5EE-8161-4A1E-8EFC-83C8D071DCBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D93FAA11-31F0-4629-B53C-AA8680283529}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D93FAA11-31F0-4629-B53C-AA8680283529}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D93FAA11-31F0-4629-B53C-AA8680283529}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D93FAA11-31F0-4629-B53C-AA8680283529}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1C5C66D9-7D51-410E-8CAE-84DD9167409C}
+	EndGlobalSection
+EndGlobal

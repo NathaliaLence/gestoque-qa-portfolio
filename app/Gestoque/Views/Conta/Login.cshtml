@@ -1,0 +1,83 @@
+﻿@model Gestoque.Models.LoginViewModel
+@{
+    ViewBag.Title = "Login";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestoque - Login</title>
+
+    <link href="~/Content/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="~/Content/css/sb-admin-3.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-800">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-10 col-lg-12 col-md-9">
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <div class="row">
+                            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+                            <div class="col-lg-6">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 text-gray-900 mb-4">Bem Vindo ao Gestoque!</h1>
+                                    </div>
+                                    @using (Html.BeginForm("Login", "Conta", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                    {
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                        <form class="user">
+                                            <div class="form-group">
+                                                @Html.TextBoxFor(m => m.Usuario, new { @class = "form-control form-control-user", placeholder = "Digite seu usuário" })
+                                                @Html.ValidationMessageFor(m => m.Usuario, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.PasswordFor(m => m.Senha, new { InputType = "password", @class = "form-control form-control-user", @id = "exampleInputPassword", placeholder = "Digite sua senha" })
+                                                @Html.ValidationMessageFor(m => m.Senha, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox small">
+                                                    @Html.CheckBoxFor(m => m.LembrarMe, new { InputType = "checkbox", @class = "custom-control-input", @id = "customCheck" })
+                                                    @Html.LabelFor(m => m.LembrarMe, new { @class = "custom-control-label", @for = "customCheck" })
+                                                </div>
+                                            </div>
+                                            <input type="submit" class="btn btn-primary btn-user btn-block" value="Login">
+                                            <hr>
+                                        </form>
+                                        <h1></h1>
+                                        if (ViewBag.Mensagem == true)
+                                        {
+                                            <div class="alert alert-danger">
+                                                <strong>Falha!</strong> Login ou senha inválida.
+                                            </div>
+                                        }
+                                        <hr>
+                                        <div class="text-center">
+                                            @Html.ActionLink("Esqueci minha senha", "EsqueciMinhaSenha", "Conta", null, new { @class = "small" })
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap core JavaScript-->
+
+    <script src="~/Content/vendor/jquery/jquery.min.js"></script>
+    <script src="~/Content/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="~/Content/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="~/Content/js/sb-admin-2.min.js"></script>
+
+</body>
+</html>

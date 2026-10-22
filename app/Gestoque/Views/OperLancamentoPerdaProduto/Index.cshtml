@@ -1,0 +1,185 @@
+﻿@{
+    ViewBag.Title = "Lançamento de Perda de Produtos";
+}
+
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+
+<link href="~/Content/sweetalert2.min.css" rel="stylesheet" />
+<link href="~/Content/Operacao/OperLacamentoProduto.css" rel="stylesheet" />
+
+<!-- Content Wrapper -->
+<div id="content-wrapper" class="d-flex flex-column">
+    <!-- Main Content -->
+    <div id="content">
+    <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+            <!-- Sidebar Toggle (Topbar) -->
+            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                <i class="fa fa-bars"></i>
+            </button>
+
+            <!-- Topbar Navbar -->
+            <ul class="navbar-nav ml-auto">
+                <!-- Nav Item - User Information -->
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link">
+                        <i class="fas fa-fw fa-user"></i>
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">@User.Identity.Name</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    <!-- End of Topbar -->
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+        <!-- Tabela -->
+        <div class="card shadow mb-5">
+            <div class="card-body">
+                <h3 class="h2 text-center">@ViewBag.Title</h3>
+                <hr class="mb-4" />
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-4" style="margin-bottom: 15px">
+                                @Html.DropDownList("ddl_inventario", new SelectList(ViewBag.Inventarios, "Id", "Nome"), new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div id="msg_mensagem_aviso" class="text-danger invisivel"></div>
+                        <fieldset>
+                            @Html.AntiForgeryToken()
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table id="grid" class="table table-bordered table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Código</th>
+                                                <th>Produto</th>
+                                                <th>Quantidade</th>
+                                                <th>Contagem</th>
+                                                <th>Motivo</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 text-right">
+                                    <a id="btn_salvar" class="btn btn-primary" style="color:white" role="button">
+                                        <i class="fa fa-check-circle"></i> Salvar
+                                    </a>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+
+<script src="~/Scripts/comum.js"></script>
+<script src="~/Scripts/sweetalert2.min.js"></script>
+<script src="~/Scripts/mustache.min.js"></script>
+
+<script id="template-grid" type="x-tmpl-mustache">
+    <tr data-id="{{ Id }}">
+        <td>{{ CodigoProduto }}</td>
+        <td>{{ NomeProduto }}</td>
+        <td>{{ QuantidadeEstoque }}</td>
+        <td>{{ QuantidadeInventario }}</td>
+        <td><input type="text" class="form-control" value="{{ Motivo }}" /></td>
+    </tr>
+</script>
+
+<script>
+        function preecher_tela() {
+            var id_inventario = $('#ddl_inventario').val(),
+                url = '@Url.Action("RecuperarListaProdutoComDiferencaEmInventario", "OperLancamentoPerdaProduto")?inventario=' + id_inventario,
+                grid = $('#grid').find('tbody');
+            grid.empty();
+            $.ajax({
+                type: 'GET',
+                processData: false,
+                url: url,
+                dataType: 'json',
+                success: function (response) {
+                    if (response) {
+                        for (var i = 0; i < response.length; i++) {
+                            grid.append(criar_linha_grid(response[i]));
+                        }
+                    }
+                    else {
+                        swal('Aviso', 'Não foi possível recuperar os produtos do inventário.', 'warning');
+                    }
+                },
+                error: function () {
+                    swal('Aviso', 'Não foi possível recuperar os produtos do inventário.', 'warning');
+                }
+            });
+        }
+        function criar_linha_grid(dados) {
+            var template = $('#template-grid').html();
+            return Mustache.render(template, dados);
+        }
+        function obter_dados() {
+            var ret = [];
+            $('#grid tbody tr').each(function (index, item) {
+                var tr = $(item),
+                    id = tr.attr('data-id'),
+                    motivo = tr.find('input[type=text]').val();
+                if (motivo != '') {
+                    ret.push({ Id: id, Motivo: motivo });
+                }
+            });
+            return ret;
+        }
+        function verificar_preenchimento() {
+            var ret = false;
+            $('#grid tbody tr input[type=text]').each(function (index, item) {
+                if ($(item).val() != '') {
+                    ret = true;
+                    return false;
+                }
+            });
+            return ret;
+        }
+        $(document).ready(function () {
+            preecher_tela();
+        })
+        .on('change', '#ddl_inventario', function () {
+            preecher_tela();
+        })
+        .on('click', '#btn_salvar', function () {
+            if (!verificar_preenchimento()) {
+                swal('Aviso', 'Para salvar, você deve preencher algum motivo.', 'warning');
+            }
+            else {
+                var url = '@Url.Action("Salvar", "OperLancamentoPerdaProduto")',
+                dados = { dados: obter_dados() };
+                $.ajax({
+                    type: 'POST',
+                    processData: false,
+                    contentType: 'application/json',
+                    data: JSON.stringify(add_anti_forgery_token(dados)),
+                    url: url,
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response) {
+                            swal('Aviso', 'Lançamento de perdas salvo com sucesso.', 'info');
+                        }
+                        else {
+                            swal('Aviso', 'Não foi possível salvar os lançamentos de perdas de produtos.', 'warning');
+                        }
+                    },
+                    error: function () {
+                        swal('Aviso', 'Não foi possível salvar os lançamentos de perdas de produtos.', 'warning');
+                    }
+                });
+            }
+        });
+</script>
+

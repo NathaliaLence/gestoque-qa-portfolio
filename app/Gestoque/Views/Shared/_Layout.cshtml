@@ -1,0 +1,138 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestoque - @ViewBag.Title</title>
+
+    <link href="~/Content/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="~/Content/css/sb-admin-2.min.css" rel="stylesheet">
+
+</head>
+<body id="page-top">
+    <div id="wrapper">
+        <ul class="navbar-nav bg-gray-900 sidebar sidebar-dark accordion" id="accordionSidebar">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/home/Index">
+                <div class="sidebar-brand-icon rotate-15">
+                    <i class="fas fa-box-open"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">Gestoque <sup></sup></div>
+            </a>
+            <hr class="sidebar-divider my-0">
+            <li class="nav-item">
+                <a class="nav-link" href="/Home/Index">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <hr class="sidebar-divider">
+                <div class="sidebar-heading">
+                    Menu
+                </div>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Cadastros" aria-expanded="true" aria-controls="Cadastros">
+                    <i class="fas fa-fw fa-edit"></i>
+                    <span>Cadastros</span>
+                </a>
+                <div id="Cadastros" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Gerenciar</h6>
+                        @Html.ActionLink("Grupo de produto", "Index", "CadGrupoProduto", null, new { @class = "collapse-item" })
+                        @Html.ActionLink("Marca de produto", "Index", "CadMarcaProduto", null, new { @class = "collapse-item" })
+                        @Html.ActionLink("Unidade de medida", "Index", "CadUnidadeMedida", null, new { @class = "collapse-item" })
+                        @Html.ActionLink("Produto", "Index", "CadProduto", null, new { @class = "collapse-item" })
+                        <h6 class="collapse-header">Estoque físico</h6>
+                        @Html.ActionLink("Local de armazenamento", "Index", "CadLocalArmazenamento", null, new { @class = "collapse-item" })
+                        <h6 class="collapse-header">Parceiros</h6>
+                        @Html.ActionLink("Fornecedor", "Index", "CadFornecedor", null, new { @class = "collapse-item" })
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Operacoes" aria-expanded="true" aria-controls="Operacoes">
+                    <i class="fas fa-fw fa-wrench"></i>
+                    <span>Operações</span>
+                </a>
+                <div id="Operacoes" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Tipos</h6>
+                        @Html.ActionLink("Entrada de produto", "Index", "OperEntradaProduto", null, new { @class = "collapse-item" })
+                        @Html.ActionLink("Saída de produto", "Index", "OperSaidaProduto", null, new { @class = "collapse-item" })
+                        @Html.ActionLink("Inventário de estoque", "Index", "OperInventario", null, new { @class = "collapse-item" })
+                        @Html.ActionLink("Lançamento de perda", "Index", "OperLancamentoPerdaProduto", null, new { @class = "collapse-item" })
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Relatorios" aria-expanded="true" aria-controls="Relatorios">
+                    <i class="fas fa-fw fa-chart-area"></i>
+                    <span>Relatórios</span>
+                </a>
+                <div id="Relatorios" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Tipos</h6>
+                        @Html.ActionLink("Posição do estoque", "Index", "RelatorioPosicaoEstoque", null, new { @class = "collapse-item" })
+                        @Html.ActionLink("Reabastecimento", "filtro", "RelatorioRessuprimento", null, new { @class = "collapse-item" })
+                    </div>
+                </div>
+            </li>
+            <li>
+                <hr class="sidebar-divider">
+            </li>
+            <li>
+                <div class="sidebar-heading">
+                    Configuração de sistema
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#usuarios" aria-expanded="true" aria-controls="usuarios">
+                    <i class="fas fa-fw fa-user"></i>
+                    <span>Usuários</span>
+                </a>
+                <div id="usuarios" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Gerenciar</h6>
+                        @Html.ActionLink("Usuário", "Index", "CadUsuario", null, new { @class = "collapse-item" })
+                        @Html.ActionLink("Permissão", "Index", "CadPerfil", null, new { @class = "collapse-item" })
+                        @Html.ActionLink("Alterar senha", "AlterarSenhaUsuario", "Conta", null, new { @class = "collapse-item" })
+                    </div>
+                </div>
+            </li>
+            @using (Html.BeginForm("LogOff", "Conta", FormMethod.Post, new { id = "logoffForm" }))
+            {
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:document.getElementById('logoffForm').submit()">
+                        <i class="fas fa-fw fa-sign-out-alt"></i>
+                        <span>Sair</span>
+                    </a>
+                </li>
+
+            }
+            <!-- Divider -->
+            <li>
+                <hr class="sidebar-divider d-none d-md-block">
+            </li>
+            <!-- Sidebar Toggler (Sidebar) -->
+
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+        </ul>
+        <!-- End of Sidebar -->
+
+        <div class="body-content" id="content-wrapper">
+            @RenderBody()
+            <footer>
+                <p style="position:absolute; bottom:0; width:100%;">&copy; @DateTime.Now.Year - Gestoque</p>
+            </footer>
+        </div>
+    </div>
+
+    <script src="~/Content/vendor/jquery/jquery.min.js"></script>
+    <script src="~/Content/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/Content/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="~/Content/js/sb-admin-2.min.js"></script>
+
+</body>
+</html>

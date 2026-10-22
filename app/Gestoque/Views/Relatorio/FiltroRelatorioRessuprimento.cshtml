@@ -1,0 +1,68 @@
+﻿@{
+    ViewBag.Title = "Filtro - Relatório de Ressuprimento";
+}
+
+<!-- Content Wrapper -->
+<div id="content-wrapper" class="d-flex flex-column">
+    <!-- Main Content -->
+    <div id="content">
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+            <!-- Sidebar Toggle (Topbar) -->
+            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                <i class="fa fa-bars"></i>
+            </button>
+
+            <!-- Topbar Navbar -->
+            <ul class="navbar-nav ml-auto">
+
+                <!-- Nav Item - User Information -->
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link">
+                        <i class="fas fa-fw fa-user"></i>
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">@User.Identity.Name</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <!-- End of Topbar -->
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+            <!-- Card -->
+            <div class="card shadow mb-auto">
+                <div class="card-body">
+                    <h3 class="h2 text-center">@ViewBag.Title</h3>
+                    <hr class="mb-4" />
+                    <h6 class="text-center mb-4">Para gerar o relatório de reabastecimento é necessário inserir a quantidade mínima desejada</h6>
+                    <div class="row justify-content-center">
+                        <div class="container-tela">
+                            <div class="col-md-12">
+                                @using (Html.BeginForm("Filtro", "RelatorioRessuprimento", FormMethod.Post))
+                                {
+                                    <div class="row justify-content-center">
+                                        <div class="form-group col-md-12">
+                                            @Html.TextBox("minimo", "", new { type = "number", @class = "form-control", placeholder = "Quantidade mínima" })
+                                        </div>
+                                    </div>
+                                    <div class="row" style="margin-left:138px">
+                                        <div class="form-group col-md-12">
+                                            <button type="submit" class="btn btn-primary" role="button">
+                                                <i class="fa fa-clipboard-list"></i> Gerar Relatório
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                                @if (ViewBag.Mensagem != null)
+                                {
+                                    <div class="alert alert-danger">
+                                        <span class="text-danger">@ViewBag.Mensagem</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

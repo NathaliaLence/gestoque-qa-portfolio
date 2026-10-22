@@ -1,0 +1,21 @@
+# Visual Studio / .NET
+.vs/
+bin/
+obj/
+*.user
+*.suo
+
+# Pacotes NuGet (restaurados pelo Visual Studio a partir do packages.config)
+app/packages/
+
+# E-mails de teste gerados localmente pela recuperação de senha
+app/Gestoque/App_Data/emails/
+
+# Testes automatizados (Node / Playwright)
+node_modules/
+test-results/
+playwright-report/
+
+# Configurações locais com segredos
+*.local.config
+.env

@@ -1,0 +1,234 @@
+﻿@{
+    ViewBag.Title = "Entrada de produtos";
+}
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+
+<link href="~/Content/sweetalert2.min.css" rel="stylesheet" />
+<link href="~/Content/Operacao/OperEntradaSaida.css" rel="stylesheet" />
+
+<!-- Content Wrapper -->
+<div id="content-wrapper" class="d-flex flex-column">
+    <!-- Main Content -->
+    <div id="content">
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+            <!-- Sidebar Toggle (Topbar) -->
+            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                <i class="fa fa-bars"></i>
+            </button>
+            <!-- Topbar Navbar -->
+            <ul class="navbar-nav ml-auto">
+                <!-- Nav Item - User Information -->
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link">
+                        <i class="fas fa-fw fa-user"></i>
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">@User.Identity.Name</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <!-- End of Topbar -->
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+            <!-- Card -->
+            <div class="card shadow mb-auto">
+                <div class="card-body">
+                    <h3 class="h2 text-center">@ViewBag.Title</h3>
+                    <hr class="mb-4" />
+
+                    <div id="msg_mensagem_aviso" class="text-danger invisivel mb-2"></div>
+                    <fieldset>
+                        @Html.AntiForgeryToken()
+                        <div class="row">
+                            <div class="col-md-6">
+                                @Html.Label("txt_data", "Data", new { @class = "control-label" })
+                                @Html.TextBox("txt_data", null, new { @class = "form-control", type = "date" })
+                            </div>
+                            <div class="col-md-6  mb-3">
+                                @Html.Label("txt_numero", "Número", new { @class = "control-label" })
+                                @Html.TextBox("txt_numero", null, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <a id="btn_incluir" class="btn btn-success" style="color:white" role="button">
+                                    <i class="fas fa-fw fa-plus-circle"></i> Incluir Produto
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table id="grid" class="table table-bordered table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Produto</th>
+                                            <th>Estoque</th>
+                                            <th>Quantidade</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-right">
+                                <a id="btn_cancelar" style="color:white" class="btn btn-facebook" role="button">
+                                    <i class="fa fa-times-circle"></i> Cancelar
+                                </a>
+                                <a id="btn_salvar" class="btn btn-primary" style="color:white" role="button">
+                                    <i class="fa fa-check-circle"></i> Salvar
+                                </a>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/mustache.min.js"></script>
+<script src="~/Scripts/comum.js"></script>
+<script src="~/Scripts/sweetalert2.min.js"></script>
+
+<script>
+        var sequencia = 1;
+        function formatar_data(data) {
+            var dia = ('0' + data.getDate()).slice(-2);
+            var mes = ('0' + (data.getMonth() + 1)).slice(-2);
+            return data.getFullYear() + "-" + mes + "-" + dia;
+        }
+        function incluir_linha_produto() {
+            $('#grid tbody').append(Mustache.render($('#template-produto').html(), { Sequencia: sequencia }));
+            sequencia++;
+        }
+
+        function limpar_tela() {
+            $('#txt_numero').val('');
+            $('#grid tbody').empty();
+            incluir_linha_produto();
+
+            var ddl = $('#grid tbody tr select:first');
+            if (ddl.length > 0) {
+                ddl.trigger('change');
+            }
+        }
+
+        function obter_lista_entradas() {
+            var ret = [];
+
+            $('#grid tbody tr').each(function (index, item) {
+                var txt_quantidade = $(this).find('input'),
+                    ddl_produto = $(this).find('select'),
+                    quantidade = parseInt(txt_quantidade.val()),
+                    produto = parseInt(ddl_produto.val());
+                if (quantidade > 0) {
+                    ret.push({ IdProduto: produto, Quantidade: quantidade });
+                }
+            });
+            return ret;
+        }
+
+        $(document).ready(function () {
+            var hoje = new Date();
+            $('#txt_data').val(formatar_data(hoje));
+            limpar_tela();
+        })
+        .on('click', '#btn_incluir', function () {
+            incluir_linha_produto();
+        })
+        .on('click', '#btn_salvar', function () {
+            var btn = $(this);
+            var lista_entradas = obter_lista_entradas();
+
+            if (lista_entradas.length == 0) {
+                swal('Aviso', 'Para salvar, você deve informar produtos com quantidades.', 'warning');
+            }
+            else {
+                var url = '@Url.Action("Salvar", "OperEntradaProduto")',
+                    dados = {
+                        data: $('#txt_data').val(),
+                        produtos: JSON.stringify(lista_entradas)
+                    };
+                $.post(url, add_anti_forgery_token(dados), function (response) {
+                    if (response.OK) {
+                        $('#txt_numero').val(response.Numero);
+                        swal('Sucesso', 'Entrada de produtos salva com sucesso.', 'info');
+                    }
+                })
+                .fail(function () {
+                    swal('Aviso', 'Não foi possível salvar a entrada de produtos.', 'warning');
+                });
+            }
+        })
+        .on('click', '#btn_cancelar', function () {
+            var lista_entradas = obter_lista_entradas();
+            if (lista_entradas.length == 0 || $('#txt_numero').val() != '') {
+                limpar_tela();
+            }
+            else {
+                swal({
+                    text: 'Deseja realmente cancelar a entrada dos produtos?',
+                    type: 'info',
+                    showCancelButton: true,
+                    allowEscapeKey: false,
+                    allowOutsideClick: false,
+                    cancelButtonText: 'Não',
+                    confirmButtonClass: 'btn-primary',
+                    confirmButtonText: 'Sim'
+                }).then(function (opcao) {
+                    if (opcao.value) {
+                        limpar_tela();
+                    }
+                });
+            }
+        })
+        .on('click', '.btn_remover', function () {
+            var linha = $(this).closest('tr');
+            linha.remove();
+            })
+
+           .on('change', 'select[id^="ddl_produto_"]', function () {
+                var url = '@Url.Action("RecuperarQuantidadeEstoqueProduto", "CadProduto")',
+                    ddl = $(this),
+                    div_quant_estoque = ddl.closest('tr').find('td[class=quant-estoque]'),
+                    dados = {
+                        id: parseInt(ddl.val())
+                    };
+                $.post(url, add_anti_forgery_token(dados), function (response) {
+                    if (response.OK) {
+                        div_quant_estoque.text(response.Result);
+                    }
+                })
+                    .fail(function () {
+                        swal('Aviso', 'Não foi possível obter a quantidade em estoque do produto.', 'warning');
+                    });
+           });
+
+</script>
+
+<script id="template-produto" type="x-tmpl-mustache">
+    <tr>
+        <td>
+            <select class="form-control" id="ddl_produto_{{ Sequencia }}">
+                @foreach (var produto in ViewBag.Produtos)
+                {
+                    <option value="@produto.Id">@produto.Nome</option>
+                }
+            </select>
+        </td>
+        <td class="quant-estoque"></td>
+        <td>
+            <input type="number" id="txt_quantidade_{{ Sequencia }}" class="form-control" value="">
+        </td>
+        <td>
+            <a class="btn btn-warning btn_remover" style="color:white" role="button">
+                <i class="fa fa-trash"></i>
+            </a>
+        </td>
+    </tr>
+</script>
+

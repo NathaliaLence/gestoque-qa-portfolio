@@ -1,0 +1,171 @@
+﻿@model List<Gestoque.Models.ViewModel.LocalArmazenamentoViewModel>
+@{
+    ViewBag.Title = "Local de Armazenamento";
+    ViewBag.Lista = Model;
+    var lista = ViewBag.Lista;
+}
+
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+
+<link href="~/Content/Cadastro/LocalArmazenamento.css" rel="stylesheet" />
+<link href="~/Content/sweetalert2.min.css" rel="stylesheet" />
+
+<!-- Content Wrapper -->
+<div id="content-wrapper" class="d-flex flex-column">
+    <!-- Main Content -->
+    <div id="content">
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+            <!-- Sidebar Toggle (Topbar) -->
+            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                <i class="fa fa-bars"></i>
+            </button>
+            <!-- Topbar Navbar -->
+            <ul class="navbar-nav ml-auto">
+                <!-- Nav Item - User Information -->
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link">
+                        <i class="fas fa-fw fa-user"></i>
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">@User.Identity.Name</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <!-- End of Topbar -->
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+            <!-- Tabela -->
+            <div class="card shadow mb-5">
+                <div class="card-body">
+                    <h3 class="h2 text-center">Gerenciar Local de Armazenamento</h3>
+                    <hr class="mb-4" />
+                    <div class="row">
+                        <!-- Botão inserir -->
+                        <div class="col-md-5 mb-3" style="color:white">
+                            <a class="btn btn-success" id="btn_incluir" role="button"><i class="fas fa-fw fa-plus-circle glyphicon glyphicon-plus"></i>Adiconar</a>
+                        </div>
+                        <!-- Paginação -->
+                        <div class="col-md-2">
+                            @Html.DropDownList("ddl_tam_pag", (SelectList)ViewBag.ListaTamPag, new { @class = "selectpicker custom-select custom-select-sm form-control form-control-sm" })
+                        </div>
+                        <!-- Filtro -->
+                        <div class="col-md-5">
+                            @Html.TextBox("txt_filtro", null, new { @class = "form-control", placeholder = "Buscar" })
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered @Html.Raw(lista == null || lista.Count == 0 ? "invisivel" : "")" id="grid_cadastro" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Ativo</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                        <!-- Mensagem sem registros na tabela -->
+                        <div style="text-align:center" id="mensagem_grid" @Html.Raw(lista != null && lista.Count > 0 ? "class=\"invisivel\"" : "")>
+
+                        </div>
+                    </div>
+                    @if (ViewBag.QuantPaginas > 1)
+                    {
+                        <div class="row">
+                            <div class="col-md-12">
+                                <nav>
+                                    <ul class="pagination">
+                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                        @for (int i = 2; i <= ViewBag.QuantPaginas; i++)
+                                        {
+                                            <li class="page-item"><a class="page-link" href="#">@i</a></li>
+                                        }
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- formulario - modal -->
+@Html.Hidden("id_cadastro")
+<div id="modal_cadastro" style="display:none" role="dialog">
+    <div id="msg_mensagem_aviso" class="text-danger invisivel"></div>
+    <fieldset>
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-md-12">
+                @Html.Label("txt_nome", "Nome", new { @class = "control-label" })
+                @Html.TextBox("txt_nome", null, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="row" style="margin-top: 15px">
+            <div class="col-md-12">
+                <div class="form-check">
+                    @Html.CheckBox("cbx_ativo", new { @class = "form-check-input" })
+                    @Html.Label("cbx_ativo", "Ativo", new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <div class="modal-footer">
+                        <a id="btn_sair" class="btn btn-info" role="button" style="color:white" data-dismiss="modal"><i class="fa fa-reply"></i> Voltar</a>
+                        <a id="btn_confirmar" class="btn btn-primary" style="color:white" role="button"><i class="fa fa-check-circle"></i> Salvar</a>
+                    </div>
+                    <div id="msg_aviso" class="alert alert-warning invisivel">Falta preencher os campos acima.</div>
+                    <div id="msg_erro" class="alert alert-danger invisible">Ops! Deus ruim!</div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</div>
+<script>
+        var tituloPagina = '@ViewBag.Title';
+        var url_excluir = '@Url.Action("ExcluirLocalArmazenamento", "CadLocalArmazenamento")';
+        var url_confirmar = '@Url.Action("SalvarLocalArmazenamento", "CadLocalArmazenamento")';
+        var url_page_click = '@Url.Action("LocalArmazenamentoPagina", "CadLocalArmazenamento")';
+        var url_tam_pag_change = '@Url.Action("LocalArmazenamentoPagina", "CadLocalArmazenamento")';
+        var url_filtro_change = '@Url.Action("LocalArmazenamentoPagina", "CadLocalArmazenamento")';
+        var url_alterar = '@Url.Action("RecuperarLocalArmazenamento", "CadLocalArmazenamento")';
+        var linhas = [];
+
+        @{
+            var linha = 0;
+            foreach (var item in Model)
+            {
+                linha++;
+                if (linha <= ViewBag.QuantMaxLinhasPorPagina)
+                {
+                    @:linhas.push(@Html.Raw(Json.Encode(item)));
+                                                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+</script>
+<script id="template-grid" type="x-tmpl-mustache">
+    <tr data-id="{{ Id }}">
+        <td>{{ Nome }}</td>
+        <td>{{ #Ativo }}SIM{{ /Ativo }}{{ ^Ativo }}NÃO{{ /Ativo }}</td>
+
+        <td>
+            <a class="btn btn-primary btn-alterar" role="button" style="color:white; font-size:14px"><i class="fa fa-redo-alt"></i> Alterar</a>
+            <a class="btn btn-danger btn-excluir" role="button" style="color:white; font-size:14px"><i class="fa fa-trash"></i> Excluir</a>
+        </td>
+    </tr>
+</script>
+
+<script src="~/Scripts/Cadastro/LocalArmazenamento.js"></script>
+<script src="~/Scripts/mustache.min.js"></script>
+<script src="~/Scripts/Cadastro/CadBase.js"></script>
+<script src="~/Scripts/sweetalert2.min.js"></script>
+<script src="~/Content/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

@@ -1,0 +1,82 @@
+﻿@model Gestoque.Models.AlteracaoSenhaUsuarioViewModel
+@{
+    ViewBag.Title = "Alterar Senha";
+}
+
+<!-- Content Wrapper -->
+<div id="content-wrapper" class="d-flex flex-column">
+    <!-- Main Content -->
+    <div id="content">
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+            <!-- Sidebar Toggle (Topbar) -->
+            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                <i class="fa fa-bars"></i>
+            </button>
+            <!-- Topbar Navbar -->
+            <ul class="navbar-nav ml-auto">
+                <!-- Nav Item - User Information -->
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link">
+                        <i class="fas fa-fw fa-user"></i>
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">@User.Identity.Name</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <!-- End of Topbar -->
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+            <!-- Card -->
+            <div class="card shadow mb-auto">
+                <div class="card-body">
+                    <h3 class="h2 text-center">@ViewBag.Title</h3>
+                    <hr class="mb-4" />
+                    <div class="row justify-content-center">
+                        <div class="container-tela" style="width:450px">
+                            <section>
+                                @using (Html.BeginForm("AlterarSenhaUsuario", "Conta", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                {
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })//mostrar todas as inf
+                                    <div class="form-group">
+                                        @Html.PasswordFor(m => m.SenhaAtual, new { @class = "form-control", placeholder = "Senha atual" })
+                                        @Html.ValidationMessageFor(m => m.SenhaAtual, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.PasswordFor(m => m.NovaSenha, new { @class = "form-control", placeholder = "Nova senha" })
+                                        @Html.ValidationMessageFor(m => m.NovaSenha, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.PasswordFor(m => m.ConfirmacaoNovaSenha, new { @class = "form-control", placeholder = "Confirmar senha" })
+                                        @Html.ValidationMessageFor(m => m.ConfirmacaoNovaSenha, "", new { @class = "text-danger" })
+                                    </div>
+
+                                    if (ViewBag.Mensagem != null)
+                                    {
+                                        if (ViewBag.Mensagem[0] == "ok")
+                                        {
+                                            <div class="alert alert-success">
+                                                <strong>Sucesso!</strong> @ViewBag.Mensagem[1]
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="alert alert-warning">
+                                                <strong>Aviso!</strong> @ViewBag.Mensagem[1]
+                                            </div>
+                                        }
+                                    }
+
+                                    <div class="form-group">
+                                        <input type="submit" class="btn btn-primary" style="color:white" value=" Alterar" />
+                                    </div>
+                                }
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jqueryval")

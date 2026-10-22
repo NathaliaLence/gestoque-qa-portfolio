@@ -1,0 +1,199 @@
+﻿@using Gestoque.Models
+@model List<ProdutoInventarioViewModel>
+@{
+    ViewBag.Title = "Inventário de Estoque";
+}
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+
+<link href="~/Content/sweetalert2.min.css" rel="stylesheet" />
+<link href="~/Content/Operacao/OperInventario.css" rel="stylesheet" />
+
+<!-- Content Wrapper -->
+<div id="content-wrapper" class="d-flex flex-column">
+    <!-- Main Content -->
+    <div id="content">
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+            <!-- Sidebar Toggle (Topbar) -->
+            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                <i class="fa fa-bars"></i>
+            </button>
+
+            <!-- Topbar Navbar -->
+            <ul class="navbar-nav ml-auto">
+                <!-- Nav Item - User Information -->
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link">
+                        <i class="fas fa-fw fa-user"></i>
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">@User.Identity.Name</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <!-- End of Topbar -->
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+            <!-- Tabela -->
+            <div class="card shadow mb-5">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h3 class="h2 text-center">@ViewBag.Title</h3>
+                            <hr class="mb-4" />
+                            <div id="msg_mensagem_aviso" class="text-danger invisivel"></div>
+                            <fieldset>
+                                @Html.AntiForgeryToken()
+                                <div class="row" style="margin-bottom: 15px">
+                                    <div class="col-md-4">
+                                        <a id="btn_incluir" class="btn btn-success" style="color:white" role="button">
+                                            <i class="fas fa-fw fa-plus-circle"></i> Incluir Inventário
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <table id="grid" class="table table-bordered table-striped table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Local</th>
+                                                    <th>Código</th>
+                                                    <th>Produto</th>
+                                                    <th>Quantidade</th>
+                                                    <th>Unidade Medida</th>
+                                                    <th>Contagem</th>
+                                                    <th>Motivo</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{var sequencia = 1;}
+                                                @foreach (var produto in Model)
+                                                {
+                                                    <tr data-id="@produto.Id">
+                                                        <td>@sequencia</td>
+                                                        <td>@produto.NomeLocalArmazenamento</td>
+                                                        <td>@produto.Codigo</td>
+                                                        <td>@produto.NomeProduto</td>
+                                                        <td>@produto.QuantEstoque</td>
+                                                        <td>@produto.NomeUnidadeMedida</td>
+                                                        <td><input type="number" class="form-control" value=""></td>
+                                                        <td><input type="text" class="form-control" value=""></td>
+                                                    </tr>
+                                                    sequencia++;
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 text-right">
+                                        <a id="btn_salvar" class="btn btn-primary" style="color:white" role="button">
+                                            <i class="fa fa-check-circle"></i> Salvar
+                                        </a>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/comum.js"></script>
+<script src="~/Scripts/sweetalert2.min.js"></script>
+
+<script>
+
+            function limpar_tela() {
+        $('#grid tbody tr input').each(function (index, input) {
+            $(input).val('');
+
+            });
+        }
+
+        function verificar_preenchimento() {
+            var ret = false;
+            $('#grid tbody tr input[type=number]').each(function (index, input) {
+                if ($(input).val() != '') {
+                    ret = true;
+                    return false;
+                }
+            });
+            return ret;
+        }
+        function obter_dados_inventario() {
+            var ret = [];
+            $('#grid tbody tr').each(function (index, item) {
+                var tr = $(item),
+                    quant_estoque = parseInt(tr.find('td').eq(4).text()),
+                    id_produto = tr.attr('data-id'),
+                    quant_inventario = parseInt(tr.find('input[type=number]').val()),
+                    motivo = tr.find('input[type=text]').val();
+                if (quant_inventario > 0) {
+                    ret.push({
+                        IdProduto: id_produto,
+                        QuantidadeEstoque: quant_estoque,
+                        QuantidadeInventario: quant_inventario,
+                        Motivo: motivo
+                    });
+                }
+            });
+            return ret;
+        }
+        $(document).ready(function () {
+            limpar_tela();
+        })
+        .on('click', '#btn_incluir', function () {
+            if (verificar_preenchimento()) {
+                swal({
+                    html: 'Algumas quantidades já foram preenchidas.<br/>Deseja realmente limpar os dados para iniciar um novo inventário?',
+                    type: 'info',
+                    showCancelButton: true,
+                    allowEscapeKey: false,
+                    allowOutsideClick: false,
+                    cancelButtonText: 'Não',
+                    confirmButtonClass: 'btn-primary',
+                    confirmButtonText: 'Sim'
+                }).then(function (opcao) {
+                    if (opcao.value) {
+                        limpar_tela();
+                    }
+                });
+            }
+            else {
+                limpar_tela();
+            }
+        })
+        .on('click', '#btn_salvar', function () {
+            if (!verificar_preenchimento()) {
+                swal('Aviso', 'Para salvar, você deve preencher todas as quantidades.', 'warning');
+            }
+            else {
+                var url = '@Url.Action("Salvar", "OperInventario")',
+                    dados = { dados: obter_dados_inventario() };
+                $.ajax({
+                    type: 'POST',
+                    processData: false,
+                    contentType: 'application/json',
+                    data: JSON.stringify(add_anti_forgery_token(dados)),
+                    url: url,
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.OK) {
+                            swal('Sucesso', 'Inventário salvo com sucesso.', 'info');
+                            limpar_tela();
+                        }
+                        else {
+                            swal('Aviso', 'Não foi possível salvar o inventário.', 'warning');
+                        }
+                    },
+                    error: function () {
+                        swal('Aviso', 'Não foi possível salvar o inventário.', 'warning');
+                    }
+                });
+            }
+        });
+</script>

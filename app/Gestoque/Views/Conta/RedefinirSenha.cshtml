@@ -1,0 +1,85 @@
+﻿@model Gestoque.Models.NovaSenhaViewModel
+@{
+
+    ViewBag.Title = "Redefinir Senha";
+    Layout = null;
+
+}<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestoque - Redefinir senha</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="~/Content/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <!-- Custom styles for this template-->
+    <link href="~/Content/css/sb-admin-3.min.css" rel="stylesheet">
+ 
+</head>
+<body>
+    <div id="content-wrapper" class="d-flex flex-column" style="margin:50px">
+        <!-- Main Content -->
+        <div id="content">
+            <!-- End of Topbar -->
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+                <!-- Card -->
+                <div class="card shadow mb-auto">
+                    <div class="card-body">
+                        <div class="row justify-content-center">
+                            <div class="container-tela" style="margin:100px">
+                                <div style="width:300px">
+                                    <h3 class="titulo mb-4 text-gray-700" style="text-align:center">@ViewBag.Title</h3>
+                                    <section>
+                                        @using (Html.BeginForm("RedefinirSenha", "Conta", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                        {
+                                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                            @Html.HiddenFor(m => m.Usuario)
+                                            <div class="form-group">
+                                                @Html.PasswordFor(m => m.Senha, new { @class = "form-control", placeholder = "Senha" })
+                                                @Html.ValidationMessageFor(m => m.Senha, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.PasswordFor(m => m.ConfirmacaoSenha, new { @class = "form-control", placeholder = "Confirmação da senha" })
+                                                @Html.ValidationMessageFor(m => m.ConfirmacaoSenha, "", new { @class = "text-danger" })
+                                            </div>
+
+                                            if (ViewBag.mensagem == true)
+                                            {
+                                                <div class="alert alert-success">
+                                                    <strong>Sucesso!</strong> Sua senha foi alterada.
+                                                </div>
+                                            }
+                                            if (ViewBag.mensagem == false)
+                                            {
+                                                <div class="alert alert-danger">
+                                                    <strong>Falha!</strong> Não foi possível alterar a senha.
+                                                </div>
+                                            }
+                                            <div class="form-group" style="position:center">
+                                                <input type="submit" class="btn btn-success" value="Enviar" />
+                                            </div>
+
+                                        }
+                                    </section>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<!-- Bootstrap core JavaScript-->
+<script src="~/Content/vendor/jquery/jquery.min.js"></script>
+<script src="~/Content/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Core plugin JavaScript-->
+<script src="~/Content/vendor/jquery-easing/jquery.easing.min.js"></script>
+<!-- Custom scripts for all pages-->
+<script src="~/Content/js/sb-admin-2.min.js"></script>
+@Scripts.Render("~/bundles/jqueryval")

@@ -1,0 +1,42 @@
+﻿@model List<Gestoque.Models.ViewModel.RelatorioRessuprimentoViewModel>
+@{
+    Layout = "";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Ressuprimento</title>
+    @Styles.Render("~/Content/css")
+
+    <link href="~/Content/Relatorio/RelatorioRessuprimento.css" rel="stylesheet" />
+
+</head>
+<body>
+    <div class="col-md-12 text-center">
+        <img src="~/Content/Imagem/logo.png" style="height: 125px" />
+        <h3>Ressuprimento</h3>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Produto</th>
+                <th>Quantidade</th>
+                <th>Comprar</th>
+            </tr>
+        </thead>
+        @{
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.CodigoProduto</td>
+                    <td>@item.NomeProduto</td>
+                    <td>@item.QuantidadeProduto</td>
+                    <td>@item.Compra</td>
+                </tr>
+            }
+        }
+    </table>
+</body>
+</html>
